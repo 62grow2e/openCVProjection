@@ -47,7 +47,7 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "YES"
-      customWorkingDirectory = "/Users/62grow2e/Dropbox/004_university/2015/computer_vision/apps/06/openCVProjection"
+      customWorkingDirectory = "/Users/62grow2e/Dropbox/004_university/2015/computer_vision/apps/openCVProjection"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"

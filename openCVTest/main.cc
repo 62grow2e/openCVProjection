@@ -13,6 +13,14 @@
 #include <memory>
 #include <opencv2/opencv.hpp>
 
+enum CornerIndex {
+  NONE = 0,
+  LEFT_TOP = 1,
+  RIGHT_TOP = 2,
+  RIGHT_BOTTOM = 3,
+  LEFT_BOTTOM = 4
+};
+
 void mouseCallback(int event, int x, int y, int flags, void* param);
 float getDistanceSquare(cv::Point2f point1, cv::Point2f point2);
 
@@ -25,7 +33,9 @@ class HomographyView final {
     int output_height)
     : window_name_(window_name),
       file_name_(file_name),
-      corner_dragged_(0),
+      corner_dragged_(CornerIndex::NONE),
+      drag_threshold_(10),
+      drag_threshold_square_(10*10),
       show_corner_mark_(false) {
     input_image_ = cv::imread("resources/" + file_name_);
     output_size_ = cv::Size(output_width, output_height);
@@ -61,17 +71,18 @@ class HomographyView final {
   void mouseLPressed(int x, int y) {
     for (auto iter = destination_points_.begin();
       iter != destination_points_.end(); iter++) {
-      if (getDistanceSquare(cv::Point2f(x, y), *iter) < 10*10) {
+      if (getDistanceSquare(cv::Point2f(x, y), *iter) <
+        drag_threshold_square_) {
         corner_dragged_ = static_cast<int>(
           std::distance(destination_points_.begin(), iter) + 1);
       }
     }
   }
   void mouseLReleased(int x, int y) {
-    corner_dragged_ = 0;
+    corner_dragged_ = CornerIndex::NONE;
   }
   void mouseMoved(int x, int y) {
-    if (corner_dragged_) {
+    if (corner_dragged_ != CornerIndex::NONE) {
       destination_points_[corner_dragged_ - 1] = cv::Point2f(x, y);
     }
     updateWindow();
@@ -90,7 +101,11 @@ class HomographyView final {
     if (show_corner_mark_) {
       for (auto iter = destination_points_.begin();
         iter != destination_points_.end(); iter++) {
-        cv::circle(output_image_, *iter, 10, cv::Scalar(100, 100, 0), 2);
+        cv::circle(output_image_,
+          *iter,
+          drag_threshold_,
+          cv::Scalar(100, 100, 0),
+          2);
       }
     }
   }
@@ -104,6 +119,8 @@ class HomographyView final {
   std::string window_name_;
   std::string file_name_;
   int corner_dragged_;
+  int drag_threshold_;
+  int drag_threshold_square_;
   bool show_corner_mark_;
 
   cv::Mat input_image_;
