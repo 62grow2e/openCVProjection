@@ -57,7 +57,7 @@ class HomographyView final {
     updateWindow();
     drawWindow();
   }
-  ~HomographyView() { cv::destroyWindow(window_name_); }
+  ~HomographyView() {}
 
   // Disallow copy and assign
   HomographyView(const HomographyView&) = delete;
@@ -94,7 +94,6 @@ class HomographyView final {
  private:
   // Window management
   void updateWindow() {
-    output_image_.release();
     homography_matrix_
       = cv::findHomography(source_corner_points_, destination_points_);
     cv::warpPerspective(input_image_,
