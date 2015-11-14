@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+
 #include <opencv2/opencv.hpp>
 
 enum CornerIndex {
@@ -36,7 +37,7 @@ class HomographyView final {
       corner_dragged_(CornerIndex::NONE),
       drag_threshold_(10),
       drag_threshold_square_(10*10),
-      show_corner_mark_(false) {
+      show_corner_mark_(true) {
     input_image_ = cv::imread("resources/" + file_name_);
     output_size_ = cv::Size(output_width, output_height);
 
@@ -55,7 +56,6 @@ class HomographyView final {
     cv::setMouseCallback(window_name_, &mouseCallback, this);
 
     updateWindow();
-    drawWindow();
   }
   ~HomographyView() {}
 
@@ -90,6 +90,18 @@ class HomographyView final {
   void mouseLDoubleClicked(int x, int y) {
     show_corner_mark_ = !show_corner_mark_;
   }
+  void drawWindow() {
+    while(1) {
+      cv::imshow(window_name_, output_image_);
+      int key = cv::waitKey(30);
+      if (key == 'm') {
+        show_corner_mark_ = !show_corner_mark_;
+      }
+      else if (key == 'q') {
+        break;
+      }
+    }
+  }
 
  private:
   // Window management
@@ -111,19 +123,6 @@ class HomographyView final {
       }
     }
   }
-  void drawWindow() {
-    while(1) {
-      cv::imshow(window_name_, output_image_);
-      int key = cv::waitKey(30);
-      if (key == 'm') {
-        show_corner_mark_ = !show_corner_mark_;
-      }
-      else if (key == 'q') {
-        break;
-      }
-    }
-  }
-
   // Properties
   std::string window_name_;
   std::string file_name_;
@@ -172,5 +171,7 @@ float getDistanceSquare(cv::Point2f point1, cv::Point2f point2) {
 // Main function
 int main(int argc, const char * argv[]) {
   HomographyView homography_view("homography", "Lenna.jpg", 1920, 1080);
+  homography_view.drawWindow();
+
   return 0;
 }
