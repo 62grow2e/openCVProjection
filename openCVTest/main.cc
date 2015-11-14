@@ -53,8 +53,6 @@ class HomographyView final {
     destination_points_.emplace_back(cv::Point2f(39, 270));
 
     cv::namedWindow(window_name_);
-    cv::setMouseCallback(window_name_, &mouseCallback, this);
-
     updateWindow();
   }
   ~HomographyView() {}
@@ -64,6 +62,7 @@ class HomographyView final {
   HomographyView& operator=(const HomographyView&) = delete;
 
   // Accessors
+  std::string get_window_name() const { return window_name_; }
   void set_file_name(std::string file_name) { file_name_ = file_name; }
   std::string get_file_name() const { return file_name_; };
 
@@ -144,8 +143,7 @@ class HomographyView final {
 
 // Mouse callback function
 void mouseCallback(int event, int x, int y, int flags, void* param) {
-  static std::unique_ptr<
-    HomographyView> homograph(static_cast<HomographyView*>(param));
+  static HomographyView* homograph = (HomographyView*)param;
   switch (event) {
     case cv::EVENT_LBUTTONDOWN:
       homograph->mouseLPressed(x, y);
@@ -172,8 +170,12 @@ float getDistanceSquare(cv::Point2f point1, cv::Point2f point2) {
 
 // Main function
 int main(int argc, const char * argv[]) {
-  HomographyView homography_view("homography", "Lenna.jpg", 1920, 1080);
-  homography_view.drawWindow();
+  std::unique_ptr<HomographyView> homography_view(
+    new HomographyView("homography", "Lenna.jpg", 1920, 1080));
+  cv::setMouseCallback(homography_view->get_window_name(),
+    &mouseCallback,
+    homography_view.get());
+  homography_view->drawWindow();
 
   return 0;
 }
