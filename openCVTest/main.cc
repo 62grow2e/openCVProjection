@@ -86,12 +86,15 @@ class HomographyView final {
       destination_points_[corner_dragged_ - 1] = cv::Point2f(x, y);
     }
     updateWindow();
-    drawWindow();
+  }
+  void mouseLDoubleClicked(int x, int y) {
+    show_corner_mark_ = !show_corner_mark_;
   }
 
  private:
   // Window management
   void updateWindow() {
+    output_image_.release();
     homography_matrix_
       = cv::findHomography(source_corner_points_, destination_points_);
     cv::warpPerspective(input_image_,
@@ -110,9 +113,16 @@ class HomographyView final {
     }
   }
   void drawWindow() {
-    cv::imshow(window_name_, output_image_);
-    show_corner_mark_
-      = (cv::waitKey() == 'm')? !show_corner_mark_: show_corner_mark_;
+    while(1) {
+      cv::imshow(window_name_, output_image_);
+      int key = cv::waitKey(30);
+      if (key == 'm') {
+        show_corner_mark_ = !show_corner_mark_;
+      }
+      else if (key == 'q') {
+        break;
+      }
+    }
   }
 
   // Properties
@@ -163,6 +173,5 @@ float getDistanceSquare(cv::Point2f point1, cv::Point2f point2) {
 // Main function
 int main(int argc, const char * argv[]) {
   HomographyView homography_view("homography", "Lenna.jpg", 1920, 1080);
-  cv::waitKey();
   return 0;
 }
