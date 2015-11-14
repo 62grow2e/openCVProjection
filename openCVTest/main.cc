@@ -90,6 +90,8 @@ class HomographyView final {
   void mouseLDoubleClicked(int x, int y) {
     show_corner_mark_ = !show_corner_mark_;
   }
+
+  // Display result
   void drawWindow() {
     while(1) {
       cv::imshow(window_name_, output_image_);
