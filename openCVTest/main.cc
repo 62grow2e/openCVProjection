@@ -1,5 +1,5 @@
 //
-//  main.cpp
+//  main.cc
 //  openCVTest
 //
 //  Created by YotaOdaka on 11/11/15.
