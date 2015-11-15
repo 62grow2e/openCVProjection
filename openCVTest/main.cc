@@ -72,7 +72,7 @@ class HomographyView final {
       iter != destination_points_.end(); iter++) {
       if (getDistanceSquare(cv::Point2f(x, y), *iter) <
         drag_threshold_square_) {
-        corner_dragged_ = static_cast<int>(
+        corner_dragged_ = static_cast<CornerIndex>(
           std::distance(destination_points_.begin(), iter) + 1);
       }
     }
@@ -107,8 +107,8 @@ class HomographyView final {
  private:
   // Window management
   void updateWindow() {
-    homography_matrix_
-      = cv::findHomography(source_corner_points_, destination_points_);
+    homography_matrix_ = cv::findHomography(
+      source_corner_points_, destination_points_);
     cv::warpPerspective(input_image_,
       output_image_,
       homography_matrix_,
@@ -127,10 +127,10 @@ class HomographyView final {
   // Properties
   std::string window_name_;
   std::string file_name_;
-  int corner_dragged_;
   int drag_threshold_;
   int drag_threshold_square_;
   bool show_corner_mark_;
+  CornerIndex corner_dragged_;
 
   cv::Mat input_image_;
   cv::Mat output_image_;
