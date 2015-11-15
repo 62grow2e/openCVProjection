@@ -143,7 +143,7 @@ class HomographyView final {
 
 // Mouse callback function
 void mouseCallback(int event, int x, int y, int flags, void* param) {
-  static HomographyView* homograph = (HomographyView*)param;
+  static HomographyView* homograph = static_cast<HomographyView*>(param);
   switch (event) {
     case cv::EVENT_LBUTTONDOWN:
       homograph->mouseLPressed(x, y);
